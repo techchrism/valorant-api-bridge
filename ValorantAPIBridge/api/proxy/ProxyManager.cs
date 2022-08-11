@@ -23,7 +23,7 @@ public class ProxyManager
         string[] segments = context.Request.Url.Segments;
         
         // Nothing on root proxy endpoint
-        if (segments.Length == proxyPathArg - 1)
+        if (segments.Length <= proxyPathArg - 1)
         {
             context.Response.StatusCode = 403;
             context.Response.Close();

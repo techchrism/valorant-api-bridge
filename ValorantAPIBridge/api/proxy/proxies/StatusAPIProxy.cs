@@ -79,6 +79,13 @@ public class StatusAPIProxy : APIProxy
         var wsContext = await context.AcceptWebSocketAsync(null);
         _listeningWebsockets.Add(wsContext.WebSocket);
         
+        var logInfo = new FileInfo(Environment.GetEnvironmentVariable("LOCALAPPDATA") + @"\VALORANT\Saved\Logs\ShooterGame.log");
+        long logSize = logInfo.Exists ? logInfo.Length : 0;
+        string lockfileReady = _lockfileHandler.LockfileData != null ? "true" : "false";
+        
+        await wsContext.WebSocket.SendAsync(Encoding.UTF8.GetBytes(
+            $"{{\"lockfileReady\": {lockfileReady}, \"logSize\": {logSize}}}"), WebSocketMessageType.Text, true, CancellationToken.None);
+        
         // Wait for websocket closure
         var buffer = new byte[1024 * 8];
         while (true)
